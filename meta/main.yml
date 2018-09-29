@@ -18,7 +18,9 @@ galaxy_info:
         - "stretch"
 
   galaxy_tags:
+    - "acme"
     - "https"
+    - "letsencrypt"
     - "networking"
     - "security"
     - "ssl"
