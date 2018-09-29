@@ -66,7 +66,7 @@ acme_sh_git_update: False
 # Where will this repo get cloned to?
 acme_sh_git_clone_dest: "/usr/local/src/acme.sh"
 
-# When enabled, acme.me will upgrade itself to the latest version which is
+# When enabled, acme.sh will upgrade itself to the latest version which is
 # separate from updating the git repo. That's because acme.sh installs itself
 # with an installer after cloning the source code.
 #

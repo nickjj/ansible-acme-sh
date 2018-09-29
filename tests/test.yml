@@ -15,12 +15,12 @@
         shell: "/bin/bash"
 
   post_tasks:
-    - name: Ensure acme.me was cloned
+    - name: Ensure acme.sh was cloned
       command: test -d /usr/local/src/acme.sh
       register: result_cloned
       changed_when: result_cloned.rc != 0
 
-    - name: Ensure acme.me was installed
+    - name: Ensure acme.sh was installed
       command: ./acme.sh --version
       args:
         chdir: "~/.acme.sh"
