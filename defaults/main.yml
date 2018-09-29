@@ -1,0 +1,46 @@
+---
+
+acme_sh_become_user: "root"
+
+acme_sh_git_url: "https://github.com/Neilpang/acme.sh"
+acme_sh_git_version: "master"
+acme_sh_git_update: False
+acme_sh_git_clone_dest: "/usr/local/src/acme.sh"
+
+acme_sh_upgrade: False
+acme_sh_uninstall: False
+
+acme_sh_account_email: ""
+
+acme_sh_renew_time_in_days: 30
+
+acme_sh_copy_certs_to_path: "/etc/ssl/ansible"
+
+acme_sh_list_domains: True
+
+acme_sh_default_staging: True
+
+acme_sh_default_force_issue: False
+acme_sh_default_force_renew: False
+
+acme_sh_default_debug: False
+
+acme_sh_default_dns_provider: "dns_dgon"
+acme_sh_default_dns_provider_api_keys: {}
+acme_sh_default_dns_sleep: 120
+
+acme_sh_default_extra_flags_issue: ""
+acme_sh_default_extra_flags_renew: ""
+acme_sh_default_extra_flags_install_cert: ""
+
+acme_sh_default_install_cert_reloadcmd: "sudo service nginx reload"
+
+acme_sh_default_issue_pre_hook: ""
+acme_sh_default_issue_post_hook: ""
+acme_sh_default_issue_renew_hook: ""
+
+acme_sh_default_remove: False
+
+acme_sh_domains: []
+
+acme_sh_apt_cache_time: 86400

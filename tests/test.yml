@@ -1,0 +1,34 @@
+---
+
+- hosts: "all"
+  become: True
+
+  vars:
+    acme_sh_become_user: "test"
+  roles:
+    - "role_under_test"
+
+  pre_tasks:
+    - name: Add test user
+      user:
+        name: "{{ acme_sh_become_user }}"
+        shell: "/bin/bash"
+
+  post_tasks:
+    - name: Ensure acme.me was cloned
+      command: test -d /usr/local/src/acme.sh
+      register: result_cloned
+      changed_when: result_cloned.rc != 0
+
+    - name: Ensure acme.me was installed
+      command: ./acme.sh --version
+      args:
+        chdir: "~/.acme.sh"
+      register: result_installed
+      changed_when: result_installed.rc != 0
+      become_user: "{{ acme_sh_become_user }}"
+
+    - name: Ensure certificate installation path exists
+      command: test -d /etc/ssl/ansible
+      register: result_cert_installed_path
+      changed_when: result_cert_installed_path.rc != 0
