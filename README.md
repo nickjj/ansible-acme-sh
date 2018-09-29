@@ -240,14 +240,13 @@ acme_sh_default_remove: False
 # Here's an example with every available option documented, and a couple of real
 # examples will also be included in the example section of this README:
 acme_sh_domains:
-#  A list of 1 or more domains, you can use ["*.example.com" ,"example.com] for
-# setting a wildcard + root domain certificate. Domains listed here will
-#  all belong to the same certificate. If you want separate certificate files
-#  then create a new "domains:" item in the list.
+#  A list of 1 or more domains, you can use ["example.com", "*.example.com"] or
+#  ["*.example.com", "example.com"] for setting a wildcard certificate along with
+#  the root domain certificate in the same file. The first domain in the list
+#  will end up being used as the base file name for the certificate name.
 #
-#  The first domain in the list will end up being used as a base file name for
-#  the certificate name. In this case it would be "example.com.pem".
-#  - domains: ["example.com", "www.example.com]
+#  If you want separate files then create a new "domains:" item in the list.
+#  - domains: ["example.com", "www.example.com", "admin.example.com"]
 #    # Optionally override the default staging variable. This overall pattern lets
 #    # you situationally override the defaults listed above for each domain list.
 #    staging: False
