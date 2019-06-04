@@ -48,7 +48,7 @@
   args:
     chdir: "~/.acme.sh"
   when:
-    - acme_sh_upgrade
+    - acme_sh_upgrade|bool
     - is_acme_sh_installed.stat.exists
     - not acme_sh_uninstall
   register: upgrade_result
@@ -69,7 +69,7 @@
   args:
     chdir: "~/.acme.sh"
   when:
-    - acme_sh_uninstall
+    - acme_sh_uninstall|bool
     - is_acme_sh_installed.stat.exists
   become_user: "{{ acme_sh_become_user }}"
 
@@ -117,7 +117,7 @@
     - "{{ acme_sh_git_clone_dest }}"
     - "~/.acme.sh"
   when:
-    - acme_sh_uninstall
+    - acme_sh_uninstall|bool
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Run custom acme.sh command
