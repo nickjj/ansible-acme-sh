@@ -29,7 +29,6 @@
 - name: Install acme.sh
   command: >-
     ./acme.sh --install --log
-    --days {{ acme_sh_renew_time_in_days }}
     {{ "--accountemail " + acme_sh_account_email if acme_sh_account_email else "" }}
   args:
     chdir: "{{ acme_sh_git_clone_dest }}"
@@ -109,7 +108,7 @@
     - item.remove is defined and item.remove
     - not acme_sh_uninstall
 
-- name: Remove acme.sh's cloned source code, installation path and log files
+- name: Remove the acme.sh cloned source code, installation path and log files
   file:
     path: "{{ item }}"
     state: "absent"
@@ -140,6 +139,7 @@
     ./acme.sh --issue -d {{ item.domains | join(" -d ") }}
     --dns {{ item.dns_provider | default(acme_sh_default_dns_provider) }}
     --dnssleep {{ item.dns_sleep | default(acme_sh_default_dns_sleep) }}
+    --days {{ acme_sh_renew_time_in_days }}
     {{ "--force" if item.force_issue | default(acme_sh_default_force_issue) else "" }}
     {{ "--staging" if item.staging | default(acme_sh_default_staging) else "" }}
     {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
