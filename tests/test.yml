@@ -14,6 +14,11 @@
         name: "{{ acme_sh_become_user }}"
         shell: "/bin/bash"
 
+    - name: Run the equivalent of "apt-get update"
+      apt:
+        update_cache: true
+      changed_when: false
+
   post_tasks:
     - name: Ensure acme.sh was cloned
       command: test -d /usr/local/src/acme.sh

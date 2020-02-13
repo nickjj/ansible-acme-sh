@@ -52,6 +52,10 @@ webroot, nginx or Apache but nothing is set in stone.
 # needs to already exist, this role will not create it.
 acme_sh_become_user: "root"
 
+# acme.sh package dependencies. The default values are for Debian / Ubuntu.
+# For CentOS and Fedora you can replace "cron" with "crond".
+acme_sh_dependencies: ["cron", "git", "wget"]
+
 # The acme.sh repo to clone.
 acme_sh_git_url: "https://github.com/Neilpang/acme.sh"
 
@@ -275,9 +279,6 @@ acme_sh_domains:
 #    extra_issue_renew_hook: ""
 #    # Optionally remove and disable the certificate.
 #    remove: True
-
-# How long should the apt-cache last in seconds?
-acme_sh_apt_cache_time: 86400
 ```
 
 ## Example usage
