@@ -1,0 +1,16 @@
+---
+
+- name: Uninstall acme.sh and disable all certificate renewals
+  command: ./acme.sh --uninstall
+  args:
+    chdir: "~/.acme.sh"
+  become_user: "{{ acme_sh_become_user }}"
+
+- name: Remove acme.sh's cloned source code, installation path and log files
+  file:
+    path: "{{ item }}"
+    state: "absent"
+  loop:
+    - "{{ acme_sh_git_clone_dest }}"
+    - "~/.acme.sh"
+  become_user: "{{ acme_sh_become_user }}"

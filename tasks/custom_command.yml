@@ -1,0 +1,9 @@
+---
+
+- name: Run custom acme.sh command
+  command: ./acme.sh {{ item.custom_command }}
+  args:
+    chdir: "~/.acme.sh"
+  environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
+  loop: "{{ acme_sh_domains }}"
+  become_user: "{{ acme_sh_become_user }}"

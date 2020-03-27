@@ -1,0 +1,48 @@
+---
+
+- name: Install dependencies
+  apt:
+    name: "{{ item }}"
+    update_cache: True
+    cache_valid_time: "{{ acme_sh_apt_cache_time }}"
+  loop: ["cron", "git", "wget"]
+
+- name: Create git clone path
+  file:
+    path: "{{ acme_sh_git_clone_dest | dirname }}"
+    state: "directory"
+    owner: "{{ acme_sh_become_user }}"
+    group: "{{ acme_sh_become_user }}"
+    mode: "0755"
+
+- name: Git clone https://github.com/Neilpang/acme.sh
+  git:
+    repo: "{{ acme_sh_git_url }}"
+    version: "{{ acme_sh_git_version }}"
+    dest: "{{ acme_sh_git_clone_dest }}"
+    update: "{{ acme_sh_git_update }}"
+  become_user: "{{ acme_sh_become_user }}"
+
+- name: Install acme.sh
+  command: >-
+    ./acme.sh --install --log
+    --days {{ acme_sh_renew_time_in_days }}
+    {{ "--accountemail " + acme_sh_account_email if acme_sh_account_email else "" }}
+  args:
+    chdir: "{{ acme_sh_git_clone_dest }}"
+    creates: "~/.acme.sh/acme.sh"
+  become_user: "{{ acme_sh_become_user }}"
+
+- name: Create certificate path
+  file:
+    path: "{{ acme_sh_copy_certs_to_path }}"
+    state: "directory"
+    owner: "{{ acme_sh_become_user }}"
+    group: "{{ acme_sh_become_user }}"
+    mode: "0755"
+
+- name: Determine if acme.sh is installed (post-install)
+  stat:
+    path: "~/.acme.sh/acme.sh"
+  register: is_acme_sh_installed
+  become_user: "{{ acme_sh_become_user }}"

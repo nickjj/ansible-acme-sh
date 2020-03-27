@@ -1,0 +1,22 @@
+---
+
+- name: Issue acme.sh certificate(s) (this will sleep for dns_sleep seconds)
+  command: >-
+    ./acme.sh --issue -d {{ item.domains | join(" -d ") }}
+    --dns {{ item.dns_provider | default(acme_sh_default_dns_provider) }}
+    --dnssleep {{ item.dns_sleep | default(acme_sh_default_dns_sleep) }}
+    {{ "--force" if item.force_issue | default(acme_sh_default_force_issue) else "" }}
+    {{ "--staging" if item.staging | default(acme_sh_default_staging) else "" }}
+    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
+    {{ "--pre-hook " + '"' + item.issue_pre_hook | default(acme_sh_default_issue_pre_hook) + '"' if item.issue_pre_hook | default(acme_sh_default_issue_pre_hook) else "" }}
+    {{ "--post-hook " + '"' + item.issue_post_hook | default(acme_sh_default_issue_post_hook) + '"' if item.issue_post_hook | default(acme_sh_default_issue_post_hook) else "" }}
+    {{ "--renew-hook " + '"' + item.issue_renew_hook | default(acme_sh_default_issue_renew_hook) + '"' if item.issue_renew_hook | default(acme_sh_default_issue_renew_hook) else "" }}
+    {{ item.extra_flags_issue | default(acme_sh_default_extra_flags_issue) }}
+  args:
+    chdir: "~/.acme.sh"
+  environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
+  loop: "{{ acme_sh_domains }}"
+  become_user: "{{ acme_sh_become_user }}"
+  register: issue_result
+  changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout
+  failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
