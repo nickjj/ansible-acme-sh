@@ -1,0 +1,9 @@
+---
+
+- name: Upgrade acme.sh
+  command: ./acme.sh --upgrade
+  args:
+    chdir: "~/.acme.sh"
+  register: upgrade_result
+  changed_when: upgrade_result.rc == 0 and "Upgrade success" in upgrade_result.stdout
+  become_user: "{{ acme_sh_become_user }}"

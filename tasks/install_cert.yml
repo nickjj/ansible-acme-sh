@@ -1,0 +1,27 @@
+---
+
+- name: Ensure installed certificates have correct user / group ownership
+  file:
+    path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
+    group: "{{ acme_sh_become_user }}"
+    owner: "{{ acme_sh_become_user }}"
+  loop:
+    - "{{ acme_sh_domains }}"
+
+- name: Install acme.sh certificate(s)
+  command: >-
+    ./acme.sh --install-cert -d {{ item.domains | first }}
+    --key-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.key
+    --fullchain-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.pem
+    --reloadcmd "{{ item.install_cert_reloadcmd | default(acme_sh_default_install_cert_reloadcmd) }}"
+    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
+    {{ item.extra_flags_install_cert | default(acme_sh_default_extra_flags_install_cert) }}
+  args:
+    chdir: "~/.acme.sh"
+  loop: "{{ acme_sh_domains }}"
+  loop_control:
+    index_var: domains_index
+  become_user: "{{ acme_sh_become_user }}"
+  register: install_cert_result
+  changed_when: issue_result.results[domains_index].changed or renew_result.results[domains_index].changed
+  failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr

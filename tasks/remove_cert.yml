@@ -1,0 +1,25 @@
+---
+
+- name: Remove acme.sh certificate(s) renewals from cron job
+  command: >-
+    ./acme.sh --remove -d {{ item.domains | first }}
+    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
+  args:
+    chdir: "~/.acme.sh"
+    removes: "~/.acme.sh/{{ item.domains | first }}"
+  loop: "{{ acme_sh_domains }}"
+  become_user: "{{ acme_sh_become_user }}"
+  register: remove_result
+
+- name: Remove acme.sh internal certificate files
+  file:
+    path: "~/.acme.sh/{{ item.domains | first }}"
+    state: "absent"
+  loop: "{{ acme_sh_domains }}"
+  become_user: "{{ acme_sh_become_user }}"
+
+- name: Remove acme.sh installed certificate files
+  file:
+    path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
+    state: "absent"
+  loop: "{{ acme_sh_domains }}"

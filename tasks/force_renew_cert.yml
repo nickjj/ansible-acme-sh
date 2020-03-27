@@ -1,0 +1,14 @@
+---
+
+- name: Force renew acme.sh certificate(s)
+  command: >-
+    ./acme.sh --renew -d {{ item.domains | first }} --force
+    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
+    {{ item.extra_flags_renew | default(acme_sh_default_extra_flags_renew) }}
+  args:
+    chdir: "~/.acme.sh"
+  loop: "{{ acme_sh_domains }}"
+
+  become_user: "{{ acme_sh_become_user }}"
+  register: renew_result
+  failed_when: renew_result.rc != 0 and "Reload error for" not in renew_result.stderr
