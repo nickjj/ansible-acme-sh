@@ -1,11 +1,10 @@
 ---
-
 galaxy_info:
-  role_name: "acme_sh"
-  author: "Nick Janetakis"
-  description: "Install and auto-renew SSL certificates with Let's Encrypt using acme.sh."
-  license: "license (MIT)"
-  min_ansible_version: 2.5
+  role_name: cloudflare-acme
+  author: sonic
+  description: Install and renew SSL certificates with Cloudflare API ; Let's Encrypt ; and acme.sh.
+  license: MIT
+  min_ansible_version: 2.9
 
   platforms:
     - name: "Ubuntu"
@@ -22,6 +21,7 @@ galaxy_info:
     - "https"
     - "letsencrypt"
     - "networking"
+    - "cloudflare"
     - "security"
     - "ssl"
     - "system"
