@@ -1,10 +1,8 @@
 - name: reload services
-  service:
-    name: "{{ item.service | default(acme_sh_service) }}"
-    state: restarted
+  command: "{{ item.reload_command }}"
   when:
     - issue_result.results[domains_index].changed
-    - item.service is defined or acme_sh_service is not empty
+    - item.reload_command
   loop: "{{ acme_sh_domains }}"
   loop_control:
     index_var: domains_index
