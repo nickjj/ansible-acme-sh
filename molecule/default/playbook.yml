@@ -3,7 +3,6 @@
   hosts: all
   become: true
   vars:
-    d:  ${VERIFIER_NAME}
     acme_sh_domains: []
   roles:
     - role: cloudflare-acme
