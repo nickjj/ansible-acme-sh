@@ -74,39 +74,26 @@
   failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr
   notify: reload services
 
-- name: Issue acme.sh certificate(s)
-  command: >-
-    ./acme.sh --issue -d {{ item.domain }} --dns dns_cf
-    {{ "--force" if item.force_issue | default(false) or item.force_renew | default(false) else "" }}
-    {{ "--staging" if item.staging | default(false) else "" }}
-    {{ "--debug" if item.debug | default(false) else "" }}
-  args:
-    chdir: "{{ acme_sh_git_clone_dest }}"
-  environment:
-    - "CF_Token": "{{ acme_cloudflare_token }}"
-    - "CF_Account_ID": "{{ acme_cloudflare_account_id }}"
-    - "CF_Zone_ID": "{{ acme_cloudflare_zone_id }}"
-  when: not item.remove | default(false)
+- name: Change certificate ownership and permission
+  file:
+    path: "{{ item.path | default(acme_sh_copy_certs_to_path) }}/{{ item.domain }}.pem"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: '0644'
   loop: "{{ acme_sh_domains }}"
-  register: issue_result
-  changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
-  failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
-
-- name: Install acme.sh certificate(s)
-  command: >-
-    ./acme.sh --install-cert -d {{ item.domain }}
-    --key-file {{ item.path | default(acme_sh_copy_certs_to_path) }}/{{ item.domain }}.key
-    --fullchain-file {{ item.path | default(acme_sh_copy_certs_to_path) }}/{{ item.domain }}.pem
-    {{ "--debug" if item.debug | default(false) else "" }}
-  args:
-    chdir: "{{ acme_sh_git_clone_dest }}"
-  loop: "{{ acme_sh_domains }}"
-  loop_control:
-    index_var: domains_index
   when: not item.remove | default(false)
   register: install_cert_result
-  changed_when: issue_result.results[domains_index].changed
-  failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr
+  notify: reload services
+
+- name: Change key ownership and permission
+  file:
+    path: "{{ item.path | default(acme_sh_copy_certs_to_path) }}/{{ item.domain }}.key"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: '0600'
+  loop: "{{ acme_sh_domains }}"
+  when: not item.remove | default(false)
+  register: install_cert_result
   notify: reload services
 
 - name: Remove acme.sh's cloned source code, installation path and log files
