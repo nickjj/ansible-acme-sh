@@ -1,11 +1,10 @@
 ---
 
 - name: Install dependencies
-  apt:
+  package:
     name: "{{ item }}"
-    update_cache: True
-    cache_valid_time: "{{ acme_sh_apt_cache_time }}"
-  loop: ["cron", "git", "wget"]
+    state: "present"
+  loop: "{{ acme_sh_dependencies }}"
   when: not acme_sh_uninstall
 
 - name: Create git clone path
