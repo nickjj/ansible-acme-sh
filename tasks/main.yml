@@ -51,9 +51,12 @@
     - "CF_Token": "{{ acme_cloudflare_token }}"
     - "CF_Account_ID": "{{ acme_cloudflare_account_id }}"
     - "CF_Zone_ID": "{{ acme_cloudflare_zone_id }}"
-  when: not item.remove | default(false)
+  when:
+    - not item.remove | default(false)
+    - acme_cloudflare_token is defined
+    - acme_cloudflare_account_id is defined
+    - acme_cloudflare_zone_id is defined
   loop: "{{ acme_sh_domains }}"
-  when: acme_cloudflare_account_id is defined and acme_cloudflare_zone_id is defined
   register: issue_result
   changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
   failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
@@ -69,9 +72,11 @@
   environment:
     - "CF_Key": "{{ acme_cloudflare_token }}"
     - "CF_Email": "{{ acme_cloudflare_email }}"
-  when: not item.remove | default(false)
+  when:
+    - not item.remove | default(false)
+    - acme_cloudflare_token is defined
+    - acme_cloudflare_email is defined
   loop: "{{ acme_sh_domains }}"
-  when: acme_cloudflare_token is defined and acme_cloudflare_email is defined
   register: issue_result
   changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
   failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
