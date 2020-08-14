@@ -15,6 +15,7 @@ acme_sh_domains:
     debug: false
     reload_command: service nginx restart
 
-acme_cloudflare_token: xxxx
-acme_cloudflare_account_id: xxxx
-acme_cloudflare_zone_id: xxxx
+# acme_cloudflare_token: xxxx
+# acme_cloudflare_account_id: xxxx
+# acme_cloudflare_zone_id: xxxx
+# acme_cloudflare_email: xxxx
