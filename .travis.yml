@@ -13,6 +13,15 @@ env:
     - MOLECULE_DISTRO: debian9
     - MOLECULE_DISTRO: debian10
 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get upgrade -y
+  - sudo apt-get purge docker-ce -y
+  - sudo apt-get autoremove -y
+  - curl -fsSL https://raw.githubusercontent.com/darkwizard242/devopsubuntu1804/v1.0/packer-build/mods/10-docker.sh | sudo bash -s -- install
+  - sudo usermod -aG docker $USER
+  - curl -fsSL https://raw.githubusercontent.com/darkwizard242/devopsubuntu1804/v1.0/packer-build/mods/10-docker.sh | sudo bash -s -- restart
+
 install:
   # Install test dependencies.
   - pip install molecule docker testinfra ansible-lint flake8 yamllint
