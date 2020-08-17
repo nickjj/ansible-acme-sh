@@ -39,7 +39,7 @@
     - item.remove | default(false)
   loop: "{{ acme_sh_domains }}"
 
-- name: Issue acme.sh certificate(s)
+- name: Issue acme.sh certificate(s) (old token)
   command: >-
     ./acme.sh --issue -d {{ item.domain }} --dns dns_cf
     {{ "--force" if item.force_issue | default(false) or item.force_renew | default(false) else "" }}
@@ -51,7 +51,31 @@
     - "CF_Token": "{{ acme_cloudflare_token }}"
     - "CF_Account_ID": "{{ acme_cloudflare_account_id }}"
     - "CF_Zone_ID": "{{ acme_cloudflare_zone_id }}"
-  when: not item.remove | default(false)
+  when:
+    - not item.remove | default(false)
+    - acme_cloudflare_token is defined
+    - acme_cloudflare_account_id is defined
+    - acme_cloudflare_zone_id is defined
+  loop: "{{ acme_sh_domains }}"
+  register: issue_result
+  changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
+  failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
+
+- name: Issue acme.sh certificate(s) (token)
+  command: >-
+    ./acme.sh --issue -d {{ item.domain }} --dns dns_cf
+    {{ "--force" if item.force_issue | default(false) or item.force_renew | default(false) else "" }}
+    {{ "--staging" if item.staging | default(false) else "" }}
+    {{ "--debug" if item.debug | default(false) else "" }}
+  args:
+    chdir: "{{ acme_sh_git_clone_dest }}"
+  environment:
+    - "CF_Key": "{{ acme_cloudflare_token }}"
+    - "CF_Email": "{{ acme_cloudflare_email }}"
+  when:
+    - not item.remove | default(false)
+    - acme_cloudflare_token is defined
+    - acme_cloudflare_email is defined
   loop: "{{ acme_sh_domains }}"
   register: issue_result
   changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
