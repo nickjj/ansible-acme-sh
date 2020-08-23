@@ -229,4 +229,4 @@
 - name: List acme.sh certificate information
   debug:
     msg: "{{ list_domains.stdout_lines }}"
-  when: acme_sh_list_domains and not acme_sh_uninstall
+  when: not ansible_check_mode and acme_sh_list_domains and not acme_sh_uninstall
