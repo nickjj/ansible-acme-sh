@@ -210,12 +210,38 @@
   when:
     - acme_sh_domains and item.domains is defined and item.domains
     - item.custom_command is undefined or not item.custom_command
+    - item.deploy_hook is undefined or not item.deploy_hook or acme_sh_default_deploy_hook
     - item.remove is undefined or not item.remove
     - not acme_sh_uninstall
   become_user: "{{ acme_sh_become_user }}"
   register: install_cert_result
   changed_when: issue_result.results[domains_index].changed or renew_result.results[domains_index].changed
   failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr
+
+- name: Deploy acme.sh certificate(s)
+  command: >-
+    ./acme.sh --deploy -d {{ item.domains | first }}
+    --deploy-hook {{ item.deploy_hook | default(acme_sh_default_deploy_hook)}}
+    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
+    {{ item.extra_flags_deploy_cert | default(acme_sh_default_extra_flags_deploy_cert) }}
+  args:
+    chdir: "~/.acme.sh"
+  loop: "{{ acme_sh_domains }}"
+  loop_control:
+    index_var: domains_index
+  environment: "{{ item.deploy_env_vars | default(acme_sh_default_deploy_env_vars) }}"
+  when:
+    - acme_sh_domains and item.domains is defined and item.domains
+    - (item.deploy_hook is defined and item.deploy_hook) or acme_sh_default_deploy_hook
+    - item.deploy_env_vars | default(acme_sh_default_deploy_env_vars)
+    - item.custom_command is undefined or not item.custom_command
+    - item.remove is undefined or not item.remove
+    - not acme_sh_uninstall
+  become_user: "{{ acme_sh_become_user }}"
+  register: deploy_cert_result
+  changed_when: issue_result.results[domains_index].changed or renew_result.results[domains_index].changed
+  failed_when: deploy_cert_result.rc != 0 and "Reload error for" not in deploy_cert_result.stderr
+
 
 - name: Register acme.sh certificate information
   command: ./acme.sh --list

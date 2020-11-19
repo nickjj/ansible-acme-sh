@@ -166,6 +166,22 @@ acme_sh_default_dns_provider: "dns_dgon"
 #      "DO_API_KEY": "THE_API_SECRET_TOKEN_FROM_THE_DO_DASHBOARD"
 acme_sh_default_dns_provider_api_keys: {}
 
+# What are your the Deploy ENV Vars?
+# The key names to use can be found at:
+#   https://github.com/acmesh-official/acme.sh/wiki/deployhooks
+# Just add them as key / value pairs here
+# without the "export ".
+#
+# For example if you were using haproxy as deploy hook you would enter:
+#    acme_sh_default_deploy_env_vars:
+#       "DEPLOY_HAPROXY_PEM_PATH": "/etc/haproxy"
+#       "DEPLOY_HAPROXY_RELOAD":"/usr/sbin/service haproxy restart"
+acme_sh_default_deploy_env_vars: {}
+
+# When set to a non-empty string, this hook will be executed after issuing a certificate.
+# Examples: https://github.com/acmesh-official/acme.sh/wiki/deployhooks
+acme_sh_default_deploy_hook: ""
+
 # How long should acme.sh sleep after attempting to set the TXT record to your
 # DNS records? Some DNS providers do not update as fast as others.
 #
@@ -197,6 +213,13 @@ acme_sh_default_extra_flags_renew: ""
 #
 # Installing is different than issuing and we'll cover that later.
 acme_sh_default_extra_flags_install_cert: ""
+
+# When deploying certificates via `deploy` command, you can choose to add additional flags that
+# are not present here by default. Supply them just as you would on the command
+# line, such as "--help".
+#
+# Installing is different than issuing and we'll cover that later.
+acme_sh_default_extra_flags_deploy_cert: ""
 
 # When a certificate is issued or renewed, acme.sh will attempt to run a command
 # of your choosing. This could be to restart or reload your web server or proxy.
@@ -260,6 +283,9 @@ acme_sh_domains:
 #    force_renew: False
 #    # Optionally turn on debug mode.
 #    debug: True
+#    # Optionally override the default environment variables used by deploy command.
+#    deploy_env_vars:
+#     "DEPLOY_HAPROXY_PEM_PATH": "/etc/haproxy"
 #    # Optionally override the default DNS provider.
 #    dns_provider: "dns_namesilo"
 #    # Optionally override the default DNS API keys.
@@ -267,10 +293,11 @@ acme_sh_domains:
 #     "Namesilo_Key": "THE_API_SECRET_TOKEN_FROM_THE_NAMESILO_DASHBOARD"
 #    # Optionally override the default DNS sleep time.
 #    dns_sleep: 900
-#    # Optionally add extra flags to any of these 3 actions:
+#    # Optionally add extra flags to any of these 4 actions:
 #    extra_flags_issue: ""
 #    extra_flags_renew: ""
 #    extra_flags_install_cert: ""
+#    extra_flags_deploy_cert: ""
 #    # Optionally set a different reload command.
 #    install_cert_reloadcmd: "whoami"
 #    # Optionally run commands during different points in the cert issue process:
@@ -279,6 +306,8 @@ acme_sh_domains:
 #    extra_issue_renew_hook: ""
 #    # Optionally remove and disable the certificate.
 #    remove: True
+#    # Optionally call a deploy_hook see : https://github.com/acmesh-official/acme.sh/wiki/deployhooks
+#    deploy_hook: ""
 ```
 
 ## Example usage
@@ -375,6 +404,19 @@ acme_sh_domains:
   - domains: ["example.com", "www.example.com"]
   - domains: ["admin.example.com"]
     force_renew: True
+```
+
+# ------------------------------------------------------------------------------
+
+# 2 certificate files using the same example, with a different deploy hook for each.
+# This will product the following result for domain :
+# - example.com the hook will deploy the cert (well formated) to a local haproxy server
+# - admin.example.com the hook will deploy certificates to a remote host using SSH  
+acme_sh_domains:
+  - domains: ["example.com", "www.example.com"]
+    deploy_hook: "haproxy"
+  - domains: ["admin.example.com"]
+    deploy_hook: "ssh"
 ```
 
 *If you're looking for an Ansible role to create users, then check out my
