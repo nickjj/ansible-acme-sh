@@ -44,3 +44,9 @@ acme_sh_default_issue_renew_hook: ""
 acme_sh_default_remove: False
 
 acme_sh_domains: []
+
+acme_sh_enable_notify: False
+acme_sh_notify_hooks: []
+acme_sh_notify_env_var: {}
+acme_sh_notify_level: 2
+acme_sh_notify_mode: 0
