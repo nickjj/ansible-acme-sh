@@ -3,12 +3,14 @@
   apt:
     update_cache: true
   when: ansible_os_family == 'Debian'
+  changed_when: False
 
 - name: Install dependencies
   package:
     name:
       - git
       - wget
+    state: present
 
 - name: Create git clone path
   file:
@@ -77,9 +79,17 @@
     - acme_cloudflare_token is defined
     - acme_cloudflare_email is defined
   loop: "{{ acme_sh_domains }}"
-  register: issue_result
+  register: issue_result2
   changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
   failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
+
+# Because even with the when, the var is overridden.
+- name: Grab the good issue result
+  set_fact:
+    issue_result: "{{ issue_result2 }}"
+  when:
+    - acme_cloudflare_token is defined
+    - acme_cloudflare_email is defined
 
 - name: Install acme.sh certificate(s)
   command: >-
