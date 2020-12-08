@@ -16,6 +16,7 @@
   file:
     path: "{{ acme_sh_git_clone_dest | dirname }}"
     state: "directory"
+    mode: "0755"
 
 - name: Git clone acme.sh
   git:
