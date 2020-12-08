@@ -4,7 +4,7 @@ services: docker
 
 env:
   global:
-    - ROLE_NAME: cloudflare-acme
+    - ROLE_NAME: cloudflare_acme
   matrix:
     - MOLECULE_DISTRO: centos7
     - MOLECULE_DISTRO: centos8

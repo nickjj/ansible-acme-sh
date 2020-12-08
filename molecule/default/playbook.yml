@@ -5,4 +5,4 @@
   vars:
     acme_sh_domains: []
   roles:
-    - role: cloudflare-acme
+    - role: cloudflare_acme
