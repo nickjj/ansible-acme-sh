@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: cloudflare-acme
+  role_name: cloudflare_acme
   author: sonic
   description: Install and renew SSL certificates with Cloudflare API ; Let's Encrypt ; and acme.sh.
   license: MIT
