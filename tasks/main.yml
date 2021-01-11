@@ -79,16 +79,14 @@
   args:
     chdir: "{{ acme_sh_ws }}"
   environment:
-    - "CF_Key": "{{ acme_cloudflare_token }}"
-    - "CF_Email": "{{ acme_cloudflare_email }}"
+    - "CF_Token": "{{ acme_cloudflare_token }}"
   when:
     - not item.remove | default(false)
     - acme_cloudflare_token is defined
-    - acme_cloudflare_email is defined
   loop: "{{ acme_sh_domains }}"
   register: issue_result2
-  changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
-  failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
+  changed_when: issue_result2.rc == 0 and "Cert success" in issue_result2.stdout
+  failed_when: issue_result2.rc != 0 and "Domains not changed" not in issue_result2.stdout
 
 # Because even with the when, the var is overridden.
 - name: Grab the good issue result
@@ -138,10 +136,7 @@
   register: install_cert_result
   notify: reload services
 
-- name: Remove acme.sh's cloned source code, installation path and log files
+- name: "Delete CF account"
   file:
-    path: "{{ item }}"
-    state: "absent"
-  changed_when: False
-  loop:
-    - "{{ acme_sh_git_clone_dest }}"
+    path: "/root/.acme.sh/account.conf"
+    state: absent
