@@ -1,4 +1,4 @@
-- name: reload services
+- name: "reload services"
   command: "{{ item.reload_command }}"
   when:
     - issue_result.results[domains_index].changed
@@ -6,3 +6,8 @@
   loop: "{{ acme_sh_domains }}"
   loop_control:
     index_var: domains_index
+
+- name: "Delete temporary"
+  file:
+    path: "{{ acme_sh_dir.path }}"
+    state: absent
