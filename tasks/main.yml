@@ -12,17 +12,22 @@
       - wget
     state: present
 
-- name: Create git clone path
-  file:
-    path: "{{ acme_sh_git_clone_dest | dirname }}"
-    state: "directory"
-    mode: "0755"
+- name: Create temporary git clone path
+  tempfile:
+    state: directory
+    suffix: _acme_sh
+  register: acme_sh_dir
+  notify:
+    - "Delete temporary"
+
+- name: Get temporary git clone path
+  set_fact: acme_sh_ws="{{ acme_sh_dir.path }}"
 
 - name: Git clone acme.sh
   git:
     repo: "{{ acme_sh_git_url }}"
     version: "{{ acme_sh_git_version }}"
-    dest: "{{ acme_sh_git_clone_dest }}"
+    dest: "{{ acme_sh_ws }}"
     update: true
   changed_when: False
 
@@ -33,7 +38,6 @@
     mode: "0755"
   loop: "{{ acme_sh_domains }}"
 
-
 - name: Remove acme.sh installed certificate files
   file:
     path: "{{ item.path | default(acme_sh_copy_certs_to_path) }}/{{ item.domain }}*"
@@ -42,14 +46,15 @@
     - item.remove | default(false)
   loop: "{{ acme_sh_domains }}"
 
-- name: Issue acme.sh certificate(s) (old token)
+# Issue or renew the certificate with legacy token
+- name: Issue acme.sh certificate(s) (legacy token)
   command: >-
     ./acme.sh --issue -d {{ item.domain }} --dns dns_cf
     {{ "--force" if item.force_issue | default(false) or item.force_renew | default(false) else "" }}
     {{ "--staging" if item.staging | default(false) else "" }}
     {{ "--debug" if item.debug | default(false) else "" }}
   args:
-    chdir: "{{ acme_sh_git_clone_dest }}"
+    chdir: "{{ acme_sh_ws }}"
   environment:
     - "CF_Token": "{{ acme_cloudflare_token }}"
     - "CF_Account_ID": "{{ acme_cloudflare_account_id }}"
@@ -64,14 +69,15 @@
   changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout and not item.force_renew | default(false)
   failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
 
-- name: Issue acme.sh certificate(s) (token)
+# Issue or renew the certificate with new app token
+- name: Issue acme.sh certificate(s)
   command: >-
     ./acme.sh --issue -d {{ item.domain }} --dns dns_cf
     {{ "--force" if item.force_issue | default(false) or item.force_renew | default(false) else "" }}
     {{ "--staging" if item.staging | default(false) else "" }}
     {{ "--debug" if item.debug | default(false) else "" }}
   args:
-    chdir: "{{ acme_sh_git_clone_dest }}"
+    chdir: "{{ acme_sh_ws }}"
   environment:
     - "CF_Key": "{{ acme_cloudflare_token }}"
     - "CF_Email": "{{ acme_cloudflare_email }}"
@@ -92,6 +98,7 @@
     - acme_cloudflare_token is defined
     - acme_cloudflare_email is defined
 
+# Install the new certificates
 - name: Install acme.sh certificate(s)
   command: >-
     ./acme.sh --install-cert -d {{ item.domain }}
@@ -99,7 +106,7 @@
     --fullchain-file {{ item.path | default(acme_sh_copy_certs_to_path) }}/{{ item.domain }}.pem
     {{ "--debug" if item.debug | default(false) else "" }}
   args:
-    chdir: "{{ acme_sh_git_clone_dest }}"
+    chdir: "{{ acme_sh_ws }}"
   loop: "{{ acme_sh_domains }}"
   loop_control:
     index_var: domains_index
