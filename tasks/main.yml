@@ -83,6 +83,8 @@
   when:
     - not item.remove | default(false)
     - acme_cloudflare_token is defined
+    - acme_cloudflare_account_id is not defined
+    - acme_cloudflare_zone_id is not defined
   loop: "{{ acme_sh_domains }}"
   register: issue_result2
   changed_when: issue_result2.rc == 0 and "Cert success" in issue_result2.stdout
@@ -94,7 +96,8 @@
     issue_result: "{{ issue_result2 }}"
   when:
     - acme_cloudflare_token is defined
-    - acme_cloudflare_email is defined
+    - acme_cloudflare_account_id is not defined
+    - acme_cloudflare_zone_id is not defined
 
 # Install the new certificates
 - name: Install acme.sh certificate(s)
