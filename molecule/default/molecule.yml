@@ -28,7 +28,7 @@ scenario:
     - syntax
     - create
     - converge
-    - idempotence
+    # - idempotence -> Should be re-enabled when this will be possible to ignore indempotence for some tasks,without `change_when: false`.
     - verify
     - destroy
 verifier:
