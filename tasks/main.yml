@@ -186,6 +186,7 @@
     path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
     group: "{{ acme_sh_become_user }}"
     owner: "{{ acme_sh_become_user }}"
+    mode: "0644"
   loop:
     - "{{ acme_sh_domains }}"
   when:
