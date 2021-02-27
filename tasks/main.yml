@@ -218,6 +218,24 @@
   changed_when: issue_result.results[domains_index].changed or renew_result.results[domains_index].changed
   failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr
 
+- name: Enable acme.sh notification
+  command: >-
+    ./acme.sh --set-notify
+    --notify-level {{ acme_sh_notify_level }}
+    --notify-mode {{ acme_sh_notify_mode }}
+    {% for hook in acme_sh_notify_hooks %} --notify-hook {{ hook }} {% endfor %}
+  args:
+    chdir: "~/.acme.sh"
+  environment: "{{ acme_sh_notify_env_var }}"
+  when:
+    - acme_sh_enable_notify
+    - acme_sh_notify_hooks | length > 0
+    - acme_sh_notify_env_var.keys() | length > 0
+    - not acme_sh_uninstall
+  become_user: "{{ acme_sh_become_user }}"
+  register: acme_notify_result
+  failed_when: acme_notify_result.rc != 0
+
 - name: Register acme.sh certificate information
   command: ./acme.sh --list
   args:
