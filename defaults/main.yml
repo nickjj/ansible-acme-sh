@@ -43,4 +43,7 @@ acme_sh_default_issue_renew_hook: ""
 
 acme_sh_default_remove: False
 
+acme_sh_default_challenge_alias: ""
+acme_sh_default_domain_alias: ""
+
 acme_sh_domains: []

@@ -238,6 +238,13 @@ acme_sh_default_issue_renew_hook: ""
 # instead of being created and set for renewal. This will not uninstall acme.sh.
 acme_sh_default_remove: False
 
+# acme.sh dns alias document https://github.com/acmesh-official/acme.sh/wiki/DNS-alias-mode
+# If your DNS provider doesn't support API access, 
+# or if you're concerned about security problems from giving the DNS API access to your main domain, 
+# then you can use DNS alias mode.
+acme_sh_default_domain_alias: ""
+acme_sh_default_challenge_aliass: ""
+
 # This list contains a list of domains, along with key / value pairs to
 # configure each set of domains individually.
 #
@@ -279,6 +286,8 @@ acme_sh_domains:
 #    extra_issue_renew_hook: ""
 #    # Optionally remove and disable the certificate.
 #    remove: True
+#    # Optionally domain dns alias.
+#    challenge_alias: alias-2-example.com
 ```
 
 ## Example usage
@@ -314,6 +323,9 @@ acme_sh_default_dns_provider_api_keys:
   "CF_Key": "THE_API_SECRET_TOKEN_FROM_THE_CLOUDFLARE_DASHBOARD"
   "CF_Email: "you@example.com"
 
+# An example alias domain for DNS alias mode, document https://github.com/acmesh-official/acme.sh/wiki/DNS-alias-mode
+acme_sh_default_challenge_aliass: "alias-example.com"
+
 # Reloading nginx inside of a Docker container that is named "nginx".
 # If you are running nginx in a Docker container then you'll also need to volume
 # mount in your certificates, but I'm sure you knew that already!
@@ -343,6 +355,20 @@ acme_sh_domains:
 #   /etc/ssl/ansible/example.com.pem (the full chain certificate)
 #   /etc/ssl/ansible/admin.example.com.key (the private key)
 #   /etc/ssl/ansible/admin.example.com.pem (the full chain certificate)
+
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+
+# 1 certificate file for all of the domains.
+# use dns and dns alias
+acme_sh_domains:
+  - domains: ["example.com", "www.example.com"]  
+    challenge_alias: alias-example.com
+
+# Produces this on your server:
+#   /etc/ssl/ansible/example.com.key (the private key)
+#   /etc/ssl/ansible/example.com.pem (the full chain certificate)
 
 # ------------------------------------------------------------------------------
 
