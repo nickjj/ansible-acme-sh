@@ -49,7 +49,7 @@
 # Issue or renew the certificate with legacy token
 - name: Issue acme.sh certificate(s) (legacy token)
   command: >-
-    ./acme.sh --issue -d {{ item.domain }} --dns dns_cf
+    ./acme.sh --issue -d {{ item.domain }} --dns dns_cf --server {{ acme_server }}
     {{ "--force" if item.force_issue | default(false) or item.force_renew | default(false) else "" }}
     {{ "--staging" if item.staging | default(false) else "" }}
     {{ "--debug" if item.debug | default(false) else "" }}
@@ -72,7 +72,7 @@
 # Issue or renew the certificate with new app token
 - name: Issue acme.sh certificate(s)
   command: >-
-    ./acme.sh --issue -d {{ item.domain }} --dns dns_cf
+    ./acme.sh --issue -d {{ item.domain }} --dns dns_cf --server {{ acme_server }}
     {{ "--force" if item.force_issue | default(false) or item.force_renew | default(false) else "" }}
     {{ "--staging" if item.staging | default(false) else "" }}
     {{ "--debug" if item.debug | default(false) else "" }}
