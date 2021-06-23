@@ -4,7 +4,7 @@ acme_sh_become_user: "root"
 
 acme_sh_dependencies: ["cron", "git", "wget"]
 
-acme_sh_git_url: "https://github.com/Neilpang/acme.sh"
+acme_sh_git_url: "https://github.com/acmesh-official/acme.sh"
 acme_sh_git_version: "master"
 acme_sh_git_update: False
 acme_sh_git_clone_dest: "/usr/local/src/acme.sh"
