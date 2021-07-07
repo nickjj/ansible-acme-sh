@@ -139,6 +139,8 @@
     ./acme.sh --issue -d {{ item.domains | join(" -d ") }}
     --dns {{ item.dns_provider | default(acme_sh_default_dns_provider) }}
     --dnssleep {{ item.dns_sleep | default(acme_sh_default_dns_sleep) }}
+    {{ "--domain-alias" if item.domain_alias | default(acme_sh_default_domain_alias|default("")) else ""}}
+    {{ "--challenge-alias " + '"' + item.challenge_alias | default(acme_sh_default_challenge_aliass) + '"' if item.challenge_alias | default(acme_sh_default_challenge_aliass|default("")) else "" }}
     {{ "--force" if item.force_issue | default(acme_sh_default_force_issue) else "" }}
     {{ "--staging" if item.staging | default(acme_sh_default_staging) else "" }}
     {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
