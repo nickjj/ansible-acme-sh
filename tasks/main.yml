@@ -81,7 +81,7 @@
     removes: "~/.acme.sh/{{ item.domains | first }}"
   loop: "{{ acme_sh_domains }}"
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
+    - item.domains is defined and (item.domains is truthy)
     - item.remove is defined and item.remove
     - not acme_sh_uninstall
   become_user: "{{ acme_sh_become_user }}"
@@ -92,7 +92,7 @@
     path: "~/.acme.sh/{{ item.domains | first }}"
     state: "absent"
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
+    - item.domains is defined and (item.domains is truthy)
     - item.remove is defined and item.remove
     - not acme_sh_uninstall
   loop: "{{ acme_sh_domains }}"
@@ -104,7 +104,7 @@
     state: "absent"
   loop: "{{ acme_sh_domains }}"
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
+    - item.domains is defined and (item.domains is truthy)
     - item.remove is defined and item.remove
     - not acme_sh_uninstall
 
@@ -126,9 +126,9 @@
   environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
   loop: "{{ acme_sh_domains }}"
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.dns_provider | default(acme_sh_default_dns_provider)
-    - item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys)
+    - item.domains is defined and (item.domains is truthy)
+    - (item.dns_provider | default(acme_sh_default_dns_provider)) is truthy
+    - (item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys)) is truthy
     - item.custom_command is defined and item.custom_command
     - item.remove is undefined or not item.remove
     - not acme_sh_uninstall
@@ -151,9 +151,9 @@
   environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
   loop: "{{ acme_sh_domains }}"
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.dns_provider | default(acme_sh_default_dns_provider)
-    - item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys)
+    - item.domains is defined and (item.domains is truthy)
+    - (item.dns_provider | default(acme_sh_default_dns_provider)) is truthy
+    - (item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys)) is truthy
     - item.force_renew is undefined or not item.force_renew
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
@@ -172,7 +172,7 @@
     chdir: "~/.acme.sh"
   loop: "{{ acme_sh_domains }}"
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
+    - item.domains is defined and (item.domains is truthy)
     - item.force_issue is undefined or not item.force_issue
     - item.force_renew is defined and item.force_renew
     - item.remove is undefined or not item.remove
@@ -190,7 +190,7 @@
   loop:
     - "{{ acme_sh_domains }}"
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
+    - item.domains is defined and (item.domains is truthy)
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
     - not acme_sh_uninstall
@@ -209,7 +209,7 @@
   loop_control:
     index_var: domains_index
   when:
-    - acme_sh_domains and item.domains is defined and item.domains
+    - item.domains is defined and (item.domains is truthy)
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
     - not acme_sh_uninstall
