@@ -20,6 +20,8 @@ acme_sh_copy_certs_to_path: "/etc/ssl/ansible"
 
 acme_sh_list_domains: True
 
+acme_sh_default_ca: "letsencrypt"
+
 acme_sh_default_staging: True
 
 acme_sh_default_force_issue: False

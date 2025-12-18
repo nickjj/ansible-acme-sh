@@ -117,6 +117,10 @@ acme_sh_copy_certs_to_path: "/etc/ssl/ansible"
 # You can disable this by setting it to False.
 acme_sh_list_domains: True
 
+# Set the default CA to use, acme.sh defaults to ZeroSSL.
+# For all the options, see https://github.com/acmesh-official/acme.sh/wiki/Server
+acme_sh_default_ca: "letsencrypt"
+
 # When set to False, it will use the live Let's Encrypt servers, so please make
 # sure everything works with staging True or you may find yourself rate limited.
 #
