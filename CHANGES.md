@@ -1,5 +1,11 @@
 # Changelog
 
+### v1.1.1
+
+*Released: March 11th 2026*
+
+- Fix conditionals to be compatible with the latest Ansible
+
 ### v1.1.0
 
 *Released: February 25th 2021*
