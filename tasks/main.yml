@@ -54,6 +54,12 @@
   changed_when: upgrade_result.rc == 0 and "Upgrade success" in upgrade_result.stdout
   become_user: "{{ acme_sh_become_user }}"
 
+- name: Use letsencrypt as CA
+  command: ./acme.sh --set-default-ca --server letsencrypt
+  args:
+    chdir: "~/.acme.sh"
+  become_user: "{{ acme_sh_become_user }}"
+
 - name: Create certificate path
   file:
     path: "{{ acme_sh_copy_certs_to_path }}"
