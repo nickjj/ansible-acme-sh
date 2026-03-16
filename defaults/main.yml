@@ -34,6 +34,10 @@ acme_sh_default_dns_sleep: 120
 acme_sh_default_extra_flags_issue: ""
 acme_sh_default_extra_flags_renew: ""
 acme_sh_default_extra_flags_install_cert: ""
+acme_sh_default_extra_flags_deploy_cert: ""
+
+acme_sh_default_deploy_env_vars: {}
+acme_sh_default_deploy_hook: ""
 
 acme_sh_default_install_cert_reloadcmd: "sudo service nginx reload"
 
